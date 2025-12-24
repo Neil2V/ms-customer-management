@@ -1,0 +1,12 @@
+server:
+    port: 8081
+spring:
+  application:
+    name: ms-customer-management
+  r2dbc:
+    url: r2dbc:sqlserver://localhost:1433;databaseName=db_customer_management
+    username: root
+    password: 1234
+
+  liquibase:
+    enabled: false
