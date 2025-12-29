@@ -1,6 +1,7 @@
 package com.pacifico.customer.service.impl;
 
 import com.pacifico.customer.exception.BusinessException;
+import com.pacifico.customer.exception.NotFoundException;
 import com.pacifico.customer.mapper.CustomerMapper;
 import com.pacifico.customer.model.dto.CustomerRequest;
 import com.pacifico.customer.model.dto.CustomerResponse;
@@ -51,16 +52,45 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Mono<CustomerResponse> getCustomerById(UUID id) {
-        return Mono.empty();
+
+        log.info("Buscando cliente con id {}", id);
+
+        return customerRepository.findById(id)
+                .switchIfEmpty(Mono.error(
+                        new NotFoundException("Cliente no encontrado")
+                ))
+                .map(customerMapper::toResponse);
     }
 
     @Override
     public Flux<CustomerResponse> getAllCustomers() {
-        return Flux.empty();
+
+        log.info("Obteniendo lista de clientes");
+
+        return customerRepository.findAll()
+                .map(customerMapper::toResponse);
     }
 
     @Override
     public Mono<Void> deactivateCustomer(UUID id) {
-        return Mono.empty();
+
+        log.info("Desactivando cliente con id {}", id);
+
+        return customerRepository.findById(id)
+                .switchIfEmpty(Mono.error(
+                        new NotFoundException("Cliente no encontrado")
+                ))
+                .flatMap(customer -> {
+
+                    if (customer.getStatus() == CustomerStatus.INACTIVE) {
+                        return Mono.error(
+                                new BusinessException("El cliente ya se encuentra inactivo")
+                        );
+                    }
+
+                    customer.setStatus(CustomerStatus.INACTIVE);
+                    return customerRepository.save(customer);
+                })
+                .then();
     }
 }
