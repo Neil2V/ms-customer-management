@@ -47,7 +47,10 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.setCreatedAt(LocalDateTime.now());
                     return customerRepository.save(entity);
                 })
-                .map(customerMapper::toResponse);
+                .map(customerMapper::toResponse)
+                .doOnSuccess(saved ->
+                        log.info("Cliente creado correctamente")
+                );
     }
 
     @Override
@@ -59,6 +62,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Cliente no encontrado")
                 ))
+                .doOnSuccess(customer ->
+                        log.info("Cliente encontrado con id {}", customer.getId())
+                )
                 .map(customerMapper::toResponse);
     }
 

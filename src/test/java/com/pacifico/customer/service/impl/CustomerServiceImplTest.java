@@ -22,6 +22,7 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -180,6 +181,79 @@ class CustomerServiceImplTest {
             StepVerifier.create(result)
                     .expectError(NotFoundException.class)
                     .verify();
+        }
+    }
+
+    @Nested
+    class deactivateCustomer {
+        @Test
+        void givenNonExistingCustomer_whenDeactivateCustomer_thenThrowsNotFoundException() {
+
+            // Arrange
+            UUID id = UUID.randomUUID();
+            when(customerRepository.findById(id))
+                    .thenReturn(Mono.empty());
+
+            // Act
+            Mono<Void> result = customerService.deactivateCustomer(id);
+
+            // Assert
+            StepVerifier.create(result)
+                    .expectError(NotFoundException.class)
+                    .verify();
+
+            verify(customerRepository, never()).save(any());
+        }
+
+        @Test
+        void givenInactiveCustomer_whenDeactivateCustomer_thenThrowsBusinessException() {
+
+            // Arrange
+            UUID id = UUID.randomUUID();
+
+            CustomerEntity customer = new CustomerEntity();
+            customer.setId(id);
+            customer.setStatus(CustomerStatus.INACTIVE);
+
+            when(customerRepository.findById(id))
+                    .thenReturn(Mono.just(customer));
+
+            // Act
+            Mono<Void> result = customerService.deactivateCustomer(id);
+
+            // Assert
+            StepVerifier.create(result)
+                    .expectError(BusinessException.class)
+                    .verify();
+
+            verify(customerRepository, never()).save(any());
+        }
+
+        @Test
+        void givenActiveCustomer_whenDeactivateCustomer_thenCustomerIsDeactivated() {
+
+            // Arrange
+            UUID id = UUID.randomUUID();
+
+            CustomerEntity customer = new CustomerEntity();
+            customer.setId(id);
+            customer.setStatus(CustomerStatus.ACTIVE);
+
+            when(customerRepository.findById(id))
+                    .thenReturn(Mono.just(customer));
+
+            when(customerRepository.save(any(CustomerEntity.class)))
+                    .thenReturn(Mono.just(customer));
+
+            // Act
+            Mono<Void> result = customerService.deactivateCustomer(id);
+
+            // Assert
+            StepVerifier.create(result)
+                    .verifyComplete();
+
+            verify(customerRepository).save(customer);
+            assertEquals(CustomerStatus.INACTIVE, customer.getStatus());
         }
     }
 
