@@ -3,6 +3,7 @@ package com.pacifico.customer.controller;
 import com.pacifico.customer.model.dto.CustomerRequest;
 import com.pacifico.customer.model.dto.CustomerResponse;
 import com.pacifico.customer.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,7 +21,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public Mono<CustomerResponse> createCustomer(@RequestBody CustomerRequest request) {
+    public Mono<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest request) {
         return customerService.createCustomer(request);
     }
 
