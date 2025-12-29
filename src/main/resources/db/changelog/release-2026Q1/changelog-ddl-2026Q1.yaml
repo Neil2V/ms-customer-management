@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026Q1-create-customer-table
+      author: neil
+      changes:
+        - createTable:
+            schemaName: schema_customer
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: UNIQUEIDENTIFIER
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: document_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: document_number
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: full_name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: email
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: DATETIME2
+                  constraints:
+                    nullable: false

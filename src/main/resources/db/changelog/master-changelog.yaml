@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: release-2026Q1/master-domain.yaml
+      relativeToChangelogFile: true

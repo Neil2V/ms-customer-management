@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.9'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'com.pacifico'
@@ -24,6 +24,10 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('liquibaseVersion', '4.25.0')
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
@@ -31,8 +35,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
 	runtimeOnly 'io.r2dbc:r2dbc-mssql:1.0.0.RELEASE'
 
+	//JDBC - SOLO para Liquibase
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+
 	//LIQUIBASE
-	implementation 'org.liquibase:liquibase-core'
+	implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
 
 	//VALIDATION
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -44,6 +52,7 @@ dependencies {
 	//LOMBOK
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'

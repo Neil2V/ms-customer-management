@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: changelog-ddl-2026Q1.yaml
+      relativeToChangelogFile: true
