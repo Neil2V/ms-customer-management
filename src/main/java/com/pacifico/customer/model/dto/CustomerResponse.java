@@ -11,6 +11,6 @@ public record CustomerResponse(
         String documentNumber,
         String fullName,
         String email,
-        CustomerStatus status,
+        String status,
         LocalDateTime createdAt
 ) {}

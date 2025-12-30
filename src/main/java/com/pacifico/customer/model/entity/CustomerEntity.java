@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table("customers")
+@Table(schema = "schema_customer", name = "customers")
 @Data
 public class CustomerEntity {
 
@@ -29,7 +29,7 @@ public class CustomerEntity {
     private String email;
 
     @Column("status")
-    private CustomerStatus status;
+    private String  status;
 
     @Column("created_at")
     private LocalDateTime createdAt;

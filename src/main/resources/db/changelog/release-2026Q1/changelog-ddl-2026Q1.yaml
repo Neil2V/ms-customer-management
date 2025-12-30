@@ -49,3 +49,13 @@ databaseChangeLog:
                   type: DATETIME2
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 2026Q1-add-default-id-customers
+      author: neil
+      changes:
+        - addDefaultValue:
+            schemaName: schema_customer
+            tableName: customers
+            columnName: id
+            defaultValueComputed: NEWID()

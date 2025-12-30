@@ -62,7 +62,7 @@ class CustomerControllerTest {
                     .value(r -> {
                         assertNotNull(r.id());
                         assertEquals("Juan Perez", r.fullName());
-                        assertEquals(CustomerStatus.ACTIVE, r.status());
+                        assertEquals(CustomerStatus.ACTIVE.name(), r.status());
                     });
         }
 
@@ -256,7 +256,7 @@ class CustomerControllerTest {
                 "12345678",
                 "Juan Perez",
                 "juan@test.com",
-                CustomerStatus.ACTIVE,
+                CustomerStatus.ACTIVE.name(),
                 LocalDateTime.now()
         );
     }
@@ -268,7 +268,7 @@ class CustomerControllerTest {
                 "12345678",
                 "Juan Perez",
                 "juan@test.com",
-                CustomerStatus.INACTIVE,
+                CustomerStatus.INACTIVE.name(),
                 LocalDateTime.now()
         );
     }

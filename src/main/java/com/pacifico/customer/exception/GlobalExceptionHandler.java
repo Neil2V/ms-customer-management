@@ -1,6 +1,7 @@
 package com.pacifico.customer.exception;
 
 import com.pacifico.customer.model.dto.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,11 +15,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     // Errores de negocio
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+
+        log.error(this.getClass().getSimpleName(), ex);
 
         ErrorResponse error = new ErrorResponse(
                 "BUSINESS_ERROR",
@@ -32,9 +36,11 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // Errores de validación (@Valid)
+    // Errores de validación
     @ExceptionHandler(WebExchangeBindException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(WebExchangeBindException ex) {
+
+        log.error(this.getClass().getSimpleName(), ex);
 
         Map<String, String> fieldErrors = ex.getFieldErrors()
                 .stream()
@@ -59,9 +65,11 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // Errores técnicos no controlados (opcional pero recomendado)
+    // Errores técnicos no controlados
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+
+        log.error(this.getClass().getSimpleName(), ex);
 
         ErrorResponse error = new ErrorResponse(
                 "INTERNAL_ERROR",
@@ -78,6 +86,8 @@ public class GlobalExceptionHandler {
     // Error de recurso no encontrado
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+
+        log.error(this.getClass().getSimpleName(), ex);
 
         ErrorResponse error = new ErrorResponse(
                 "CUST-NOTFOUND-001",

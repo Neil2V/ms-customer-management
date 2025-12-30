@@ -213,7 +213,7 @@ class CustomerServiceImplTest {
 
             CustomerEntity customer = new CustomerEntity();
             customer.setId(id);
-            customer.setStatus(CustomerStatus.INACTIVE);
+            customer.setStatus(CustomerStatus.INACTIVE.name());
 
             when(customerRepository.findById(id))
                     .thenReturn(Mono.just(customer));
@@ -237,7 +237,7 @@ class CustomerServiceImplTest {
 
             CustomerEntity customer = new CustomerEntity();
             customer.setId(id);
-            customer.setStatus(CustomerStatus.ACTIVE);
+            customer.setStatus(CustomerStatus.ACTIVE.name());
 
             when(customerRepository.findById(id))
                     .thenReturn(Mono.just(customer));
@@ -253,7 +253,7 @@ class CustomerServiceImplTest {
                     .verifyComplete();
 
             verify(customerRepository).save(customer);
-            assertEquals(CustomerStatus.INACTIVE, customer.getStatus());
+            assertEquals(CustomerStatus.INACTIVE.name(), customer.getStatus());
         }
     }
 
@@ -275,7 +275,7 @@ class CustomerServiceImplTest {
         entity.setDocumentNumber("12345678");
         entity.setFullName("Neil Vara");
         entity.setEmail("neil@gmail.com");
-        entity.setStatus(CustomerStatus.ACTIVE);
+        entity.setStatus(CustomerStatus.ACTIVE.name());
         entity.setCreatedAt(LocalDateTime.now());
         return entity;
     }

@@ -6,7 +6,7 @@ spring:
     name: ms-customer-management
 
   r2dbc:
-    url: r2dbc:sqlserver://localhost:1433;databaseName=db_customer_management;encrypt=false
+    url: r2dbc:pool:sqlserver://localhost:1433/db_customer_management?encrypt=false
     username: sa
     password: Password123!
 
@@ -29,6 +29,5 @@ spring:
 
 logging:
   level:
-    liquibase: DEBUG
-    org.springframework.jdbc: DEBUG
+    org.springframework.data.r2dbc: DEBUG
     io.r2dbc: DEBUG

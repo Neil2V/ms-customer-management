@@ -37,13 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository
                 .existsByDocumentTypeAndDocumentNumber(customer.documentType(), customer.documentNumber())
                 .flatMap(exists -> {
-                    if (exists)
+                    System.out.println("exists = " + exists);
+                    if (exists) {
                         return Mono.error(
                                 new BusinessException("El cliente con documento: " + customer.documentNumber() + "ya existe"));
-
+                    }
                     CustomerEntity entity = customerMapper.toEntity(customer);
-                    entity.setId(UUID.randomUUID());
-                    entity.setStatus(CustomerStatus.ACTIVE);
+                    entity.setStatus(CustomerStatus.ACTIVE.name());
                     entity.setCreatedAt(LocalDateTime.now());
                     return customerRepository.save(entity);
                 })
@@ -88,13 +88,13 @@ public class CustomerServiceImpl implements CustomerService {
                 ))
                 .flatMap(customer -> {
 
-                    if (customer.getStatus() == CustomerStatus.INACTIVE) {
+                    if (customer.getStatus() == CustomerStatus.INACTIVE.name()) {
                         return Mono.error(
                                 new BusinessException("El cliente ya se encuentra inactivo")
                         );
                     }
 
-                    customer.setStatus(CustomerStatus.INACTIVE);
+                    customer.setStatus(CustomerStatus.INACTIVE.name());
                     return customerRepository.save(customer)
                             .doOnSuccess(saved ->
                                     log.info("Cliente {} desactivado correctamente", saved.getId())
