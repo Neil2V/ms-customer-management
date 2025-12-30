@@ -263,8 +263,8 @@ class CustomerServiceImplTest {
         return new CustomerRequest(
                 "DNI",
                 "12345678",
-                "John Doe",
-                "john@gmail.com"
+                "Neil Vara",
+                "neil@gmail.com"
         );
     }
 
@@ -273,8 +273,8 @@ class CustomerServiceImplTest {
         entity.setId(UUID.randomUUID());
         entity.setDocumentType("DNI");
         entity.setDocumentNumber("12345678");
-        entity.setFullName("John Doe");
-        entity.setEmail("john@gmail.com");
+        entity.setFullName("Neil Vara");
+        entity.setEmail("neil@gmail.com");
         entity.setStatus(CustomerStatus.ACTIVE);
         entity.setCreatedAt(LocalDateTime.now());
         return entity;

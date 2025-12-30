@@ -95,7 +95,10 @@ public class CustomerServiceImpl implements CustomerService {
                     }
 
                     customer.setStatus(CustomerStatus.INACTIVE);
-                    return customerRepository.save(customer);
+                    return customerRepository.save(customer)
+                            .doOnSuccess(saved ->
+                                    log.info("Cliente {} desactivado correctamente", saved.getId())
+                            );
                 })
                 .then();
     }
