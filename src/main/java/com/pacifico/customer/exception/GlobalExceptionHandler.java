@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ NoResourceFoundException.class, NotFoundException.class })
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
 
-        log.warn("Recurso no encontrado", ex);
+        log.error("Recurso no encontrado", ex);
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
 
-        log.warn("Error de negocio", ex);
+        log.error("Error de negocio", ex);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WebExchangeBindException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(WebExchangeBindException ex) {
 
-        log.warn("Error de validación", ex);
+        log.error("Error de validación", ex);
 
         Map<String, String> fieldErrors = ex.getFieldErrors()
                 .stream()
