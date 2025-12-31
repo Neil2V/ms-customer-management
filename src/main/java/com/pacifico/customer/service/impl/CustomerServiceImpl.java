@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -40,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
                     System.out.println("exists = " + exists);
                     if (exists) {
                         return Mono.error(
-                                new BusinessException("El cliente con documento: " + customer.documentNumber() + "ya existe"));
+                                new BusinessException("El cliente con documento: " + customer.documentNumber() + " ya existe"));
                     }
                     CustomerEntity entity = customerMapper.toEntity(customer);
                     entity.setStatus(CustomerStatus.ACTIVE.name());
@@ -88,7 +89,7 @@ public class CustomerServiceImpl implements CustomerService {
                 ))
                 .flatMap(customer -> {
 
-                    if (customer.getStatus() == CustomerStatus.INACTIVE.name()) {
+                    if (Objects.equals(customer.getStatus(), CustomerStatus.INACTIVE.name())) {
                         return Mono.error(
                                 new BusinessException("El cliente ya se encuentra inactivo")
                         );

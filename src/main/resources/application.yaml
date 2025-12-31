@@ -30,4 +30,3 @@ spring:
 logging:
   level:
     org.springframework.data.r2dbc: DEBUG
-    io.r2dbc: DEBUG

@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -18,29 +19,43 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // Errores de negocio
+    // 404 - Recurso no encontrado
+    @ExceptionHandler({ NoResourceFoundException.class, NotFoundException.class })
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
+
+        log.warn("Recurso no encontrado", ex);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        "NOT_FOUND",
+                        ex.getMessage(),
+                        null,
+                        LocalDateTime.now()
+                ));
+    }
+
+    // 400 - Errores de negocio
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
 
-        log.error(this.getClass().getSimpleName(), ex);
-
-        ErrorResponse error = new ErrorResponse(
-                "BUSINESS_ERROR",
-                ex.getMessage(),
-                null,
-                LocalDateTime.now()
-        );
+        log.warn("Error de negocio", ex);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+                .body(new ErrorResponse(
+                        "BUSINESS_ERROR",
+                        ex.getMessage(),
+                        null,
+                        LocalDateTime.now()
+                ));
     }
 
-    // Errores de validación
     @ExceptionHandler(WebExchangeBindException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(WebExchangeBindException ex) {
 
-        log.error(this.getClass().getSimpleName(), ex);
+        log.warn("Error de validación", ex);
 
         Map<String, String> fieldErrors = ex.getFieldErrors()
                 .stream()
@@ -50,54 +65,33 @@ public class GlobalExceptionHandler {
                                 fe.getDefaultMessage(),
                                 "Valor inválido"
                         ),
-                        (msg1, msg2) -> msg1
+                        (m1, m2) -> m1
                 ));
-
-        ErrorResponse error = new ErrorResponse(
-                "VALIDATION_ERROR",
-                "Error de validación en la solicitud",
-                fieldErrors,
-                LocalDateTime.now()
-        );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+                .body(new ErrorResponse(
+                        "VALIDATION_ERROR",
+                        "Error de validación en la solicitud",
+                        fieldErrors,
+                        LocalDateTime.now()
+                ));
     }
 
-    // Errores técnicos no controlados
+    // 500 - Errores técnicos
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
 
-        log.error(this.getClass().getSimpleName(), ex);
-
-        ErrorResponse error = new ErrorResponse(
-                "INTERNAL_ERROR",
-                "Ocurrió un error inesperado",
-                null,
-                LocalDateTime.now()
-        );
+        log.error("Error técnico no controlado", ex);
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(error);
-    }
-
-    // Error de recurso no encontrado
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
-
-        log.error(this.getClass().getSimpleName(), ex);
-
-        ErrorResponse error = new ErrorResponse(
-                "CUST-NOTFOUND-001",
-                ex.getMessage(),
-                null,
-                LocalDateTime.now()
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(error);
+                .body(new ErrorResponse(
+                        "INTERNAL_ERROR",
+                        "Ocurrió un error inesperado",
+                        null,
+                        LocalDateTime.now()
+                ));
     }
 }
