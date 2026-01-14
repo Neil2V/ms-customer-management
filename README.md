@@ -15,7 +15,7 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado:
 ## Configurar el application.yml con tus datos de conexion
 
 ## SonarQube
-Archivo de evidencia: ![Evidencia SonarQube](sonar.png)
+Imagen de evidencia: ![Evidencia SonarQube](sonar.png)
 
 ## Postman
 Archivo: gestion_clientes.postman_collection.json
