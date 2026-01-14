@@ -90,5 +90,7 @@ sonarqube {
 						.get()
 						.asFile
 						.absolutePath
+		property "sonar.java.binaries",
+				layout.buildDirectory.file("classes/java/main").get().asFile.absolutePath
 	}
 }

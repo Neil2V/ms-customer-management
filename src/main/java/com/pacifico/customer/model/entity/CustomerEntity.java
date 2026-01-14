@@ -1,6 +1,5 @@
 package com.pacifico.customer.model.entity;
 
-import com.pacifico.customer.model.enums.CustomerStatus;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;

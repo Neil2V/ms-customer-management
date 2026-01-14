@@ -38,8 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository
                 .existsByDocumentTypeAndDocumentNumber(customer.documentType(), customer.documentNumber())
                 .flatMap(exists -> {
-                    System.out.println("exists = " + exists);
-                    if (exists) {
+                    if (Boolean.TRUE.equals(exists)) {
                         return Mono.error(
                                 new BusinessException("El cliente con documento: " + customer.documentNumber() + " ya existe"));
                     }

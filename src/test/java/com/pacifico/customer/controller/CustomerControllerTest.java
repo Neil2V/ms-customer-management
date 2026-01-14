@@ -36,9 +36,6 @@ class CustomerControllerTest {
         this.webTestClient = webTestClient;
     }
 
-    // =========================
-    // POST /customers
-    // =========================
     @Nested
     class createCustomer {
 
@@ -66,9 +63,6 @@ class CustomerControllerTest {
                     });
         }
 
-        // =========================
-        // POST /customers (400)
-        // =========================
         @Test
         void givenInvalidCustomerRequest_whenCreateCustomer_thenReturnsBadRequest() {
 
@@ -84,9 +78,6 @@ class CustomerControllerTest {
         }
     }
 
-    // =========================
-    // GET /customers/{id}
-    // =========================
     @Nested
     class getCustomerById {
         @Test
@@ -125,9 +116,6 @@ class CustomerControllerTest {
         }
     }
 
-    // =========================
-    // GET /customers
-    // =========================
     @Nested
     class getAllCustomers {
 
@@ -171,10 +159,6 @@ class CustomerControllerTest {
         }
     }
 
-
-    // =========================
-    // PATCH /customers/{id}/deactive
-    // =========================
     @Nested
     class caseDeactivateCustomer {
         @Test
@@ -257,18 +241,6 @@ class CustomerControllerTest {
                 "Juan Perez",
                 "juan@test.com",
                 CustomerStatus.ACTIVE.name(),
-                LocalDateTime.now()
-        );
-    }
-
-    private CustomerResponse inactiveCustomerResponse(UUID id) {
-        return new CustomerResponse(
-                id,
-                "dni",
-                "12345678",
-                "Juan Perez",
-                "juan@test.com",
-                CustomerStatus.INACTIVE.name(),
                 LocalDateTime.now()
         );
     }
