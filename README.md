@@ -3,10 +3,10 @@ Proyecto Spring Boot para la gestión de clientes
 
 Requisitos Previos
 Antes de ejecutar el proyecto, asegúrate de tener instalado:
--Java 17
--Gradle 8+
--SQL Server
--Postman (opcional, para probar la colección)
+- Java 17
+- Gradle 8+
+- SQL Server
+- Postman (opcional, para probar la colección)
 
 Configuración de la Base de Datos necesarias
 - CREATE DATABASE db_customer_management;
