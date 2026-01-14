@@ -2,10 +2,12 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id "org.sonarqube" version "7.2.0.6526"
+	id 'jacoco'
 }
 
 group = 'com.pacifico'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
@@ -64,4 +66,29 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "ms-customer-management"
+		property "sonar.projectName", "ms-customer-management"
+		property "sonar.host.url", "http://localhost:9000"
+		property "sonar.token", System.getenv("SONAR_TOKEN")
+		property "sonar.coverage.jacoco.xmlReportPaths",
+				layout.buildDirectory
+						.file("reports/jacoco/test/jacocoTestReport.xml")
+						.get()
+						.asFile
+						.absolutePath
+	}
 }

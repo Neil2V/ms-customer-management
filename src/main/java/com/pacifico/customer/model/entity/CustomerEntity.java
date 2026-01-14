@@ -33,4 +33,7 @@ public class CustomerEntity {
 
     @Column("created_at")
     private LocalDateTime createdAt;
+
+    @Column("columna_creada")
+    private LocalDateTime columnaCreada;
 }

@@ -59,3 +59,16 @@ databaseChangeLog:
             tableName: customers
             columnName: id
             defaultValueComputed: NEWID()
+
+  - changeSet:
+      id: 2026Q1-add-column-updated-at-customers
+      author: neil
+      changes:
+          - addColumn:
+              schemaName: schema_customer
+              tableName: customers
+              columns:
+                - column:
+                    name: columna_creada
+                    type: DATETIME2
+                    defaultValueComputed: SYSUTCDATETIME()
