@@ -46,8 +46,8 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         "BUSINESS_ERROR",
-                        ex.getMessage(),
-                        null,
+                        ex.getDescription() != null ? ex.getDescription() : ex.getMessage(),
+                        ex.getErrors() != null && !ex.getErrors().isEmpty() ? Map.of("field", ex.getErrors().get(0)) : null,
                         LocalDateTime.now()
                 ));
     }
