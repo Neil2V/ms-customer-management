@@ -1,26 +1,30 @@
 package com.pacifico.customer.controller;
 
+import com.pacifico.customer.controller.request.HeaderRequest;
 import com.pacifico.customer.exception.BusinessException;
 import com.pacifico.customer.exception.NotFoundException;
 import com.pacifico.customer.model.dto.CustomerRequest;
 import com.pacifico.customer.model.dto.CustomerResponse;
 import com.pacifico.customer.model.enums.CustomerStatus;
 import com.pacifico.customer.service.CustomerService;
+import com.pacifico.customer.validation.HeaderValidate;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(CustomerController.class)
@@ -29,11 +33,44 @@ class CustomerControllerTest {
     private final WebTestClient webTestClient;
 
     @MockBean
+    private HeaderValidate headerValidate;
+
+    @MockBean
     private CustomerService customerService;
+
+    private static HttpHeaders httpHeaders;
+
+    @BeforeAll
+    static void initHeaders() {
+        HeaderRequest headerRequest = HeaderRequest.builder()
+                .transactionId("transactionID")
+                .applicationId("applicationID")
+                .applicationName("applicationName")
+                .userConsumerId("userConsumerID")
+                .consumerServiceName("consumerServiceName")
+                .build();
+        httpHeaders = buildHeaders(headerRequest);
+    }
+
+    private static HttpHeaders buildHeaders(HeaderRequest headerRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Transaction-Id", headerRequest.getTransactionId());
+        headers.add("Aplicacion-Id", headerRequest.getApplicationId());
+        headers.add("Aplicacion-Name", headerRequest.getApplicationName());
+        headers.add("User-Consumer-Id", headerRequest.getUserConsumerId());
+        headers.add("Consumer-Service-Name", headerRequest.getConsumerServiceName());
+        return headers;
+    }
 
     @Autowired
     CustomerControllerTest(WebTestClient webTestClient) {
         this.webTestClient = webTestClient;
+    }
+
+    @BeforeEach
+    void setupMocks() {
+        when(headerValidate.validateGetCustomer(any())).thenReturn(Mono.empty());
     }
 
     @Nested
@@ -42,22 +79,20 @@ class CustomerControllerTest {
         @Test
         void givenValidCustomerRequest_whenCreateCustomer_thenReturnsCustomerResponse() {
 
-            // Arrange
-            UUID generatedId = UUID.randomUUID();
-            CustomerResponse response = activeCustomerResponse(generatedId);
+            CustomerResponse response = activeCustomerResponse("789456145");
 
             when(customerService.createCustomer(any()))
                     .thenReturn(Mono.just(response));
 
-            // Act y Assert
             webTestClient.post()
                     .uri("/customers")
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .bodyValue(validCustomerRequest())
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody(CustomerResponse.class)
                     .value(r -> {
-                        assertNotNull(r.id());
+                        assertEquals("789456145", r.documentNumber());
                         assertEquals("Juan Perez", r.fullName());
                         assertEquals(CustomerStatus.ACTIVE.name(), r.status());
                     });
@@ -66,12 +101,11 @@ class CustomerControllerTest {
         @Test
         void givenInvalidCustomerRequest_whenCreateCustomer_thenReturnsBadRequest() {
 
-            // Arrange
             CustomerRequest invalidRequest = invalidCustomerRequest();
 
-            // Act y Assert
             webTestClient.post()
                     .uri("/customers")
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .bodyValue(invalidRequest)
                     .exchange()
                     .expectStatus().isBadRequest();
@@ -83,34 +117,31 @@ class CustomerControllerTest {
         @Test
         void givenExistingCustomerId_whenGetCustomerById_thenReturnsCustomerResponse() {
 
-            // Arrange
-            UUID customerId = UUID.randomUUID();
-            CustomerResponse response = activeCustomerResponse(customerId);
+            CustomerResponse response = activeCustomerResponse("789456145");
 
-            when(customerService.getCustomerById(customerId))
+            when(customerService.getCustomerByDocumentNumber(anyString()))
                     .thenReturn(Mono.just(response));
 
-            // Act y Assert
             webTestClient.get()
-                    .uri("/customers/{id}", customerId)
+                    .uri("/customers/{documentNumber}", "789456145")
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody(CustomerResponse.class)
-                    .value(r -> assertEquals(customerId, r.id()));
+                    .value(r -> assertEquals("789456145", response.documentNumber()));
         }
 
         @Test
         void givenNonExistingCustomerId_whenGetCustomerById_thenReturnsNotFound() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "789456145";
 
-            when(customerService.getCustomerById(id))
+            when(customerService.getCustomerByDocumentNumber(anyString()))
                     .thenReturn(Mono.error(new NotFoundException("Cliente no encontrado")));
 
-            // Act y Assert
             webTestClient.get()
-                    .uri("/customers/{id}", id)
+                    .uri("/customers/{documentNumber}", documentNumber)
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isNotFound();
         }
@@ -122,36 +153,34 @@ class CustomerControllerTest {
         @Test
         void givenCustomersExist_whenGetAllCustomers_thenReturnsCustomerList() {
 
-            // Arrange
-            CustomerResponse customer1 = activeCustomerResponse(UUID.randomUUID());
-            CustomerResponse customer2 = activeCustomerResponse(UUID.randomUUID());
+            CustomerResponse customer1 = activeCustomerResponse("789456145");
+            CustomerResponse customer2 = activeCustomerResponse("123456789");
 
             when(customerService.getAllCustomers())
                     .thenReturn(Flux.just(customer1, customer2));
 
-            // Act y Assert
             webTestClient.get()
                     .uri("/customers")
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBodyList(CustomerResponse.class)
                     .hasSize(2)
                     .value(list -> {
-                        assertNotNull(list.get(0).id());
-                        assertNotNull(list.get(1).id());
+                        assertEquals("789456145", list.get(0).documentNumber());
+                        assertEquals("123456789", list.get(1).documentNumber());
                     });
         }
 
         @Test
         void givenNoCustomersExist_whenGetAllCustomers_thenReturnsEmptyList() {
 
-            // Arrange
             when(customerService.getAllCustomers())
                     .thenReturn(Flux.empty());
 
-            // Act y Assert
             webTestClient.get()
                     .uri("/customers")
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBodyList(CustomerResponse.class)
@@ -164,15 +193,14 @@ class CustomerControllerTest {
         @Test
         void givenActiveCustomer_whenDeactivateCustomer_thenReturnsOk() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(id))
+            when(customerService.deactivateCustomer(documentNumber))
                     .thenReturn(Mono.empty());
 
-            // Act y Assert
             webTestClient.patch()
-                    .uri("/customers/{id}/deactive", id)
+                    .uri("/customers/{id}/deactive", documentNumber)
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody().isEmpty();
@@ -181,17 +209,16 @@ class CustomerControllerTest {
         @Test
         void givenInactiveCustomer_whenDeactivateCustomer_thenReturnsConflict() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(id))
+            when(customerService.deactivateCustomer(documentNumber))
                     .thenReturn(
                             Mono.error(new BusinessException("El cliente ya se encuentra inactivo"))
                     );
 
-            // Act y Assert
             webTestClient.patch()
-                    .uri("/customers/{id}/deactive", id)
+                    .uri("/customers/{id}/deactive", documentNumber)
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isBadRequest();
         }
@@ -199,17 +226,16 @@ class CustomerControllerTest {
         @Test
         void givenNonExistingCustomerId_whenDeactivateCustomer_thenReturnsNotFound() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(id))
+            when(customerService.deactivateCustomer(documentNumber))
                     .thenReturn(
                             Mono.error(new NotFoundException("Cliente no encontrado"))
                     );
 
-            // Act y Assert
             webTestClient.patch()
-                    .uri("/customers/{id}/deactive", id)
+                    .uri("/customers/{id}/deactive", documentNumber)
+                    .headers(headers -> headers.addAll(httpHeaders))
                     .exchange()
                     .expectStatus().isNotFound();
         }
@@ -233,11 +259,10 @@ class CustomerControllerTest {
         );
     }
 
-    private CustomerResponse activeCustomerResponse(UUID id) {
+    private CustomerResponse activeCustomerResponse(String documentNumber) {
         return new CustomerResponse(
-                id,
                 "dni",
-                "12345678",
+                documentNumber,
                 "Juan Perez",
                 "juan@test.com",
                 CustomerStatus.ACTIVE.name(),

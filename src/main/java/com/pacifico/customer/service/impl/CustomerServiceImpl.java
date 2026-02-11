@@ -54,11 +54,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<CustomerResponse> getCustomerById(UUID id) {
+    public Mono<CustomerResponse> getCustomerByDocumentNumber(String documentNumber) {
 
-        log.info("Buscando cliente con id {}", id);
+        log.info("Buscando cliente con documentNumber {}", documentNumber);
 
-        return customerRepository.findById(id)
+        return customerRepository.findByDocumentNumber(documentNumber)
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Cliente no encontrado")
                 ))
@@ -78,11 +78,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Void> deactivateCustomer(UUID id) {
+    public Mono<Void> deactivateCustomer(String documentNumber) {
 
-        log.info("Desactivando cliente con id {}", id);
+        log.info("Desactivando cliente con documentNumber {}", documentNumber);
 
-        return customerRepository.findById(id)
+        return customerRepository.findByDocumentNumber(documentNumber)
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Cliente no encontrado")
                 ))

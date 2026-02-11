@@ -30,23 +30,39 @@ public class CustomerController {
     @PostMapping
     public Mono<CustomerResponse> createCustomer(
             @RequestHeader(value = Constants.TRANSACTION_ID, required = false) String transactionId,
-            @RequestHeader(value = Constants.APPLICATION_ID) String applicationId,
-            @RequestHeader(value = Constants.APPLICATION_NAME) String applicationName,
-            @RequestHeader(value = Constants.USER_CONSUMER_ID) String userConsumerId,
-            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME) String consumerServiceName,
+            @RequestHeader(value = Constants.APPLICATION_ID, required = false) String applicationId,
+            @RequestHeader(value = Constants.APPLICATION_NAME, required = false) String applicationName,
+            @RequestHeader(value = Constants.USER_CONSUMER_ID, required = false) String userConsumerId,
+            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME, required = false) String consumerServiceName,
             @Valid @RequestBody CustomerRequest request) {
-        return customerService.createCustomer(request);
+        final HeaderRequest header = HeaderRequest.builder()
+                .transactionId(transactionId)
+                .applicationId(applicationId)
+                .applicationName(applicationName)
+                .userConsumerId(userConsumerId)
+                .consumerServiceName(consumerServiceName)
+                .build();
+        return headerValidate.validateGetCustomer(header)
+                .then(customerService.createCustomer(request));
     }
 
-    @GetMapping("/{id}")
-    public Mono<CustomerResponse> getCustomerById(
-            @RequestHeader(value = Constants.TRANSACTION_ID) String transactionId,
-            @RequestHeader(value = Constants.APPLICATION_ID) String applicationId,
-            @RequestHeader(value = Constants.APPLICATION_NAME) String applicationName,
-            @RequestHeader(value = Constants.USER_CONSUMER_ID) String userConsumerId,
-            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME) String consumerServiceName,
-            @PathVariable UUID id) {
-        return customerService.getCustomerById(id);
+    @GetMapping("/{documentNumber}")
+    public Mono<CustomerResponse> getCustomerByDocumentNumber(
+            @RequestHeader(value = Constants.TRANSACTION_ID, required = false) String transactionId,
+            @RequestHeader(value = Constants.APPLICATION_ID, required = false) String applicationId,
+            @RequestHeader(value = Constants.APPLICATION_NAME, required = false) String applicationName,
+            @RequestHeader(value = Constants.USER_CONSUMER_ID, required = false) String userConsumerId,
+            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME, required = false) String consumerServiceName,
+            @PathVariable String documentNumber) {
+        final HeaderRequest header = HeaderRequest.builder()
+                .transactionId(transactionId)
+                .applicationId(applicationId)
+                .applicationName(applicationName)
+                .userConsumerId(userConsumerId)
+                .consumerServiceName(consumerServiceName)
+                .build();
+        return headerValidate.validateGetCustomer(header)
+                .then(customerService.getCustomerByDocumentNumber(documentNumber));
     }
 
     @GetMapping
@@ -68,14 +84,22 @@ public class CustomerController {
                 .thenMany(customerService.getAllCustomers());
     }
 
-    @PatchMapping("{id}/deactive")
+    @PatchMapping("{documentNumber}/deactive")
     public Mono<Void> updateCustomerStatus(
-            @RequestHeader(value = Constants.TRANSACTION_ID) String transactionId,
-            @RequestHeader(value = Constants.APPLICATION_ID) String applicationId,
-            @RequestHeader(value = Constants.APPLICATION_NAME) String applicationName,
-            @RequestHeader(value = Constants.USER_CONSUMER_ID) String userConsumerId,
-            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME) String consumerServiceName,
-            @PathVariable UUID id) {
-        return customerService.deactivateCustomer(id);
+            @RequestHeader(value = Constants.TRANSACTION_ID, required = false) String transactionId,
+            @RequestHeader(value = Constants.APPLICATION_ID, required = false) String applicationId,
+            @RequestHeader(value = Constants.APPLICATION_NAME, required = false) String applicationName,
+            @RequestHeader(value = Constants.USER_CONSUMER_ID, required = false) String userConsumerId,
+            @RequestHeader(value = Constants.CONSUMER_SERVICE_NAME, required = false) String consumerServiceName,
+            @PathVariable String documentNumber) {
+        final HeaderRequest header = HeaderRequest.builder()
+                .transactionId(transactionId)
+                .applicationId(applicationId)
+                .applicationName(applicationName)
+                .userConsumerId(userConsumerId)
+                .consumerServiceName(consumerServiceName)
+                .build();
+        return headerValidate.validateGetCustomer(header)
+                 .then(customerService.deactivateCustomer(documentNumber));
     }
 }

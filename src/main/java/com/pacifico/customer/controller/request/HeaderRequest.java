@@ -24,6 +24,4 @@ public class HeaderRequest implements Serializable {
     private String userConsumerId;
     @JsonProperty("nombreServicioConsumidor")
     private String consumerServiceName;
-    @JsonProperty("Ocp-Apim-Subscription-Key")
-    private String subscriptionKey;
 }

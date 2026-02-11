@@ -54,7 +54,6 @@ public class BusinessException extends RuntimeException {
                 .build();
     }
 
-    // Método utilitario para generar el código de error
     private static String getErrorCode(ErrorConstant.Type type, ErrorConstant.Layer layer, ErrorConstant.SystemComponent component, String code) {
         return String.format("%s-%s-%s-%s", type.name(), layer.name(), component.name(), code);
     }

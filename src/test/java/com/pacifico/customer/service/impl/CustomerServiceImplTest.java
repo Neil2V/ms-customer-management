@@ -53,16 +53,13 @@ class CustomerServiceImplTest {
         @Test
         void givenExistingCustomer_whenCreateCustomer_thenThrowsBusinessException() {
 
-            // Given
             when(customerRepository.existsByDocumentTypeAndDocumentNumber(
                     validRequest.documentType(),
                     validRequest.documentNumber())
             ).thenReturn(Mono.just(true));
 
-            // When
             Mono<CustomerResponse> result = customerService.createCustomer(validRequest);
 
-            // Then
             StepVerifier.create(result)
                     .expectError(BusinessException.class)
                     .verify();
@@ -73,7 +70,6 @@ class CustomerServiceImplTest {
         @Test
         void givenNewCustomer_whenCreateCustomer_thenCustomerIsCreated() {
 
-            // Given
             when(customerRepository.existsByDocumentTypeAndDocumentNumber(
                     validRequest.documentType(),
                     validRequest.documentNumber())
@@ -83,10 +79,8 @@ class CustomerServiceImplTest {
             when(customerRepository.save(any(CustomerEntity.class))).thenReturn(Mono.just(customerEntity));
             when(customerMapper.toResponse(customerEntity)).thenReturn(customerResponse);
 
-            // When
             Mono<CustomerResponse> result = customerService.createCustomer(validRequest);
 
-            // Then
             StepVerifier.create(result)
                     .expectNext(customerResponse)
                     .verifyComplete();
@@ -100,7 +94,6 @@ class CustomerServiceImplTest {
         @Test
         void givenCustomersExist_whenGetAllCustomers_thenReturnList() {
 
-            // Given
             CustomerEntity entity1 = buildCustomerEntity();
             CustomerEntity entity2 = buildCustomerEntity();
 
@@ -113,10 +106,8 @@ class CustomerServiceImplTest {
             when(customerMapper.toResponse(entity1)).thenReturn(response1);
             when(customerMapper.toResponse(entity2)).thenReturn(response2);
 
-            // When
             Flux<CustomerResponse> result = customerService.getAllCustomers();
 
-            // Then
             StepVerifier.create(result)
                     .expectNext(response1)
                     .expectNext(response2)
@@ -126,14 +117,11 @@ class CustomerServiceImplTest {
         @Test
         void givenNoCustomers_whenGetAllCustomers_thenReturnEmptyFlux() {
 
-            // Given
             when(customerRepository.findAll())
                     .thenReturn(Flux.empty());
 
-            // When
             Flux<CustomerResponse> result = customerService.getAllCustomers();
 
-            // Then
             StepVerifier.create(result)
                     .verifyComplete();
         }
@@ -145,21 +133,17 @@ class CustomerServiceImplTest {
         @Test
         void givenExistingCustomer_whenGetCustomerById_thenReturnCustomer() {
 
-            // Given
-            UUID id = UUID.randomUUID();
             CustomerEntity entity = buildCustomerEntity();
             CustomerResponse response = buildCustomerResponse(entity);
 
-            when(customerRepository.findById(id))
+            when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.just(entity));
 
             when(customerMapper.toResponse(entity))
                     .thenReturn(response);
 
-            // When
-            Mono<CustomerResponse> result = customerService.getCustomerById(id);
+            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(entity.getDocumentNumber());
 
-            // Then
             StepVerifier.create(result)
                     .expectNext(response)
                     .verifyComplete();
@@ -168,16 +152,13 @@ class CustomerServiceImplTest {
         @Test
         void givenCustomerNotFound_whenGetCustomerById_thenThrowsNotFoundException() {
 
-            // Given
-            UUID id = UUID.randomUUID();
+            String documentNumber = "654874";
 
-            when(customerRepository.findById(id))
+            when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.empty());
 
-            // When
-            Mono<CustomerResponse> result = customerService.getCustomerById(id);
+            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(documentNumber);
 
-            // Then
             StepVerifier.create(result)
                     .expectError(NotFoundException.class)
                     .verify();
@@ -189,15 +170,12 @@ class CustomerServiceImplTest {
         @Test
         void givenNonExistingCustomer_whenDeactivateCustomer_thenThrowsNotFoundException() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
-            when(customerRepository.findById(id))
+            String documentNumber = "654874";
+            when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.empty());
 
-            // Act
-            Mono<Void> result = customerService.deactivateCustomer(id);
+            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
 
-            // Assert
             StepVerifier.create(result)
                     .expectError(NotFoundException.class)
                     .verify();
@@ -208,20 +186,16 @@ class CustomerServiceImplTest {
         @Test
         void givenInactiveCustomer_whenDeactivateCustomer_thenThrowsBusinessException() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "654874";
 
             CustomerEntity customer = new CustomerEntity();
-            customer.setId(id);
             customer.setStatus(CustomerStatus.INACTIVE.name());
 
-            when(customerRepository.findById(id))
+            when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.just(customer));
 
-            // Act
-            Mono<Void> result = customerService.deactivateCustomer(id);
+            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
 
-            // Assert
             StepVerifier.create(result)
                     .expectError(BusinessException.class)
                     .verify();
@@ -232,23 +206,19 @@ class CustomerServiceImplTest {
         @Test
         void givenActiveCustomer_whenDeactivateCustomer_thenCustomerIsDeactivated() {
 
-            // Arrange
-            UUID id = UUID.randomUUID();
+            String documentNumber = "654874";
 
             CustomerEntity customer = new CustomerEntity();
-            customer.setId(id);
             customer.setStatus(CustomerStatus.ACTIVE.name());
 
-            when(customerRepository.findById(id))
+            when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.just(customer));
 
             when(customerRepository.save(any(CustomerEntity.class)))
                     .thenReturn(Mono.just(customer));
 
-            // Act
-            Mono<Void> result = customerService.deactivateCustomer(id);
+            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
 
-            // Assert
             StepVerifier.create(result)
                     .verifyComplete();
 
@@ -282,7 +252,6 @@ class CustomerServiceImplTest {
 
     private CustomerResponse buildCustomerResponse(CustomerEntity entity) {
         return new CustomerResponse(
-                entity.getId(),
                 entity.getDocumentType(),
                 entity.getDocumentNumber(),
                 entity.getFullName(),

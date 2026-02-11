@@ -13,4 +13,6 @@ public interface CustomerRepository
             String documentType,
             String documentNumber
     );
+
+    Mono<CustomerEntity> findByDocumentNumber(String documentNumber);
 }
