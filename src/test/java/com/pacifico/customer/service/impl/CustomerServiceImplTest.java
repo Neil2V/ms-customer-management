@@ -9,7 +9,6 @@ import com.pacifico.customer.model.dto.CustomerResponse;
 import com.pacifico.customer.model.entity.CustomerEntity;
 import com.pacifico.customer.model.enums.CustomerStatus;
 import com.pacifico.customer.repository.CustomerRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

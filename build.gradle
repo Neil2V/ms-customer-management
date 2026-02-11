@@ -86,7 +86,7 @@ sonarqube {
 		property "sonar.projectKey", "ms-customer-management"
 		property "sonar.projectName", "ms-customer-management"
 		property "sonar.host.url", "http://localhost:9000"
-		property "sonar.token", System.getenv("SONAR_TOKEN")
+		property "sonar.token", "sqp_21737f8cd7b319c0bbaa3241f89d17c132fea4b9"
 		property "sonar.coverage.jacoco.xmlReportPaths",
 				layout.buildDirectory
 						.file("reports/jacoco/test/jacocoTestReport.xml")

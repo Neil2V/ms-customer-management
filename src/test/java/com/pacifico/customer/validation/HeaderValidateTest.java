@@ -3,15 +3,9 @@ package com.pacifico.customer.validation;
 import com.pacifico.customer.controller.request.HeaderRequest;
 import com.pacifico.customer.exception.BusinessErrorCodes;
 import com.pacifico.customer.exception.BusinessException;
-import com.pacifico.customer.util.Constants;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class HeaderValidateTest {
 

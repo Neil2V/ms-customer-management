@@ -3,7 +3,6 @@ package com.pacifico.customer.validation;
 import com.pacifico.customer.controller.request.HeaderRequest;
 import com.pacifico.customer.exception.BusinessErrorCodes;
 import com.pacifico.customer.exception.BusinessException;
-import com.pacifico.customer.model.dto.CustomerRequest;
 import com.pacifico.customer.util.Constants;
 import com.pacifico.customer.util.Logger;
 import org.springframework.stereotype.Component;

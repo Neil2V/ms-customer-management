@@ -16,7 +16,7 @@ public class Validate {
             Pattern patron = Pattern.compile(RegularExpression.NOT_SPECIAL_CHARACTERS);
             Matcher matcher = patron.matcher(StringUtils.trim(value));
             if (!matcher.matches()) {
-                error = Messages.HEADER_ONLY_LETTERS_NUMBER_HYPHEN;
+                error = nameField + Messages.HEADER_ONLY_LETTERS_NUMBER_HYPHEN;
                 errors.add(error);
             }
         }
