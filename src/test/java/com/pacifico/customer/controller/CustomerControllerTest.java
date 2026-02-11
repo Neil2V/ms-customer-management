@@ -81,7 +81,7 @@ class CustomerControllerTest {
 
             CustomerResponse response = activeCustomerResponse("789456145");
 
-            when(customerService.createCustomer(any()))
+            when(customerService.createCustomer(any(), any()))
                     .thenReturn(Mono.just(response));
 
             webTestClient.post()
@@ -119,7 +119,7 @@ class CustomerControllerTest {
 
             CustomerResponse response = activeCustomerResponse("789456145");
 
-            when(customerService.getCustomerByDocumentNumber(anyString()))
+            when(customerService.getCustomerByDocumentNumber(any(), anyString()))
                     .thenReturn(Mono.just(response));
 
             webTestClient.get()
@@ -136,7 +136,7 @@ class CustomerControllerTest {
 
             String documentNumber = "789456145";
 
-            when(customerService.getCustomerByDocumentNumber(anyString()))
+            when(customerService.getCustomerByDocumentNumber(any(), anyString()))
                     .thenReturn(Mono.error(new NotFoundException("Cliente no encontrado")));
 
             webTestClient.get()
@@ -156,7 +156,7 @@ class CustomerControllerTest {
             CustomerResponse customer1 = activeCustomerResponse("789456145");
             CustomerResponse customer2 = activeCustomerResponse("123456789");
 
-            when(customerService.getAllCustomers())
+            when(customerService.getAllCustomers(any()))
                     .thenReturn(Flux.just(customer1, customer2));
 
             webTestClient.get()
@@ -175,7 +175,7 @@ class CustomerControllerTest {
         @Test
         void givenNoCustomersExist_whenGetAllCustomers_thenReturnsEmptyList() {
 
-            when(customerService.getAllCustomers())
+            when(customerService.getAllCustomers(any()))
                     .thenReturn(Flux.empty());
 
             webTestClient.get()
@@ -195,7 +195,7 @@ class CustomerControllerTest {
 
             String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(documentNumber))
+            when(customerService.deactivateCustomer(any(), anyString()))
                     .thenReturn(Mono.empty());
 
             webTestClient.patch()
@@ -211,7 +211,7 @@ class CustomerControllerTest {
 
             String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(documentNumber))
+            when(customerService.deactivateCustomer(any(), anyString()))
                     .thenReturn(
                             Mono.error(new BusinessException("El cliente ya se encuentra inactivo"))
                     );
@@ -228,7 +228,7 @@ class CustomerControllerTest {
 
             String documentNumber = "74913215";
 
-            when(customerService.deactivateCustomer(documentNumber))
+            when(customerService.deactivateCustomer(any(), anyString()))
                     .thenReturn(
                             Mono.error(new NotFoundException("Cliente no encontrado"))
                     );
@@ -255,7 +255,7 @@ class CustomerControllerTest {
                 "dni",
                 "789456145",
                 "Juan",
-                "juan"  // invalid email
+                "juan"
         );
     }
 

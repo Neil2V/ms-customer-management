@@ -1,5 +1,6 @@
 package com.pacifico.customer.service.impl;
 
+import com.pacifico.customer.controller.request.HeaderRequest;
 import com.pacifico.customer.exception.BusinessException;
 import com.pacifico.customer.exception.NotFoundException;
 import com.pacifico.customer.mapper.CustomerMapper;
@@ -9,6 +10,7 @@ import com.pacifico.customer.model.entity.CustomerEntity;
 import com.pacifico.customer.model.enums.CustomerStatus;
 import com.pacifico.customer.repository.CustomerRepository;
 import com.pacifico.customer.service.CustomerService;
+import com.pacifico.customer.util.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -31,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<CustomerResponse> createCustomer(CustomerRequest customer) {
+    public Mono<CustomerResponse> createCustomer(HeaderRequest headerRequest, CustomerRequest customer) {
 
         log.info("Creando cliente {}", customer.documentNumber());
 
@@ -54,22 +56,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<CustomerResponse> getCustomerByDocumentNumber(String documentNumber) {
+    public Mono<CustomerResponse> getCustomerByDocumentNumber(HeaderRequest headerRequest, String documentNumber) {
 
         log.info("Buscando cliente con documentNumber {}", documentNumber);
-
         return customerRepository.findByDocumentNumber(documentNumber)
                 .switchIfEmpty(Mono.error(
                         new NotFoundException("Cliente no encontrado")
                 ))
                 .doOnSuccess(customer ->
-                        log.info("Cliente encontrado con id {}", customer.getId())
+                        log.info("Cliente encontrado con documentNumber {}", customer.getDocumentNumber())
                 )
                 .map(customerMapper::toResponse);
     }
 
     @Override
-    public Flux<CustomerResponse> getAllCustomers() {
+    public Flux<CustomerResponse> getAllCustomers(HeaderRequest headerRequest) {
 
         log.info("Obteniendo lista de clientes");
 
@@ -78,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Void> deactivateCustomer(String documentNumber) {
+    public Mono<Void> deactivateCustomer(HeaderRequest headerRequest, String documentNumber) {
 
         log.info("Desactivando cliente con documentNumber {}", documentNumber);
 

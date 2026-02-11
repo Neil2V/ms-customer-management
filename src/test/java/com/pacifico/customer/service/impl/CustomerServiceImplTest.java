@@ -1,5 +1,6 @@
 package com.pacifico.customer.service.impl;
 
+import com.pacifico.customer.controller.request.HeaderRequest;
 import com.pacifico.customer.exception.BusinessException;
 import com.pacifico.customer.exception.NotFoundException;
 import com.pacifico.customer.mapper.CustomerMapper;
@@ -8,6 +9,7 @@ import com.pacifico.customer.model.dto.CustomerResponse;
 import com.pacifico.customer.model.entity.CustomerEntity;
 import com.pacifico.customer.model.enums.CustomerStatus;
 import com.pacifico.customer.repository.CustomerRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,12 +42,20 @@ class CustomerServiceImplTest {
     private CustomerRequest validRequest;
     private CustomerEntity customerEntity;
     private CustomerResponse customerResponse;
+    private HeaderRequest headerRequest;
 
     @BeforeEach
     void setUp() {
         validRequest = buildCustomerRequest();
         customerEntity = buildCustomerEntity();
         customerResponse = buildCustomerResponse(customerEntity);
+        headerRequest = HeaderRequest.builder()
+                .transactionId("transactionID")
+                .applicationId("applicationID")
+                .applicationName("applicationName")
+                .userConsumerId("userConsumerID")
+                .consumerServiceName("consumerServiceName")
+                .build();
     }
 
     @Nested
@@ -58,7 +68,7 @@ class CustomerServiceImplTest {
                     validRequest.documentNumber())
             ).thenReturn(Mono.just(true));
 
-            Mono<CustomerResponse> result = customerService.createCustomer(validRequest);
+            Mono<CustomerResponse> result = customerService.createCustomer(headerRequest, validRequest);
 
             StepVerifier.create(result)
                     .expectError(BusinessException.class)
@@ -79,7 +89,7 @@ class CustomerServiceImplTest {
             when(customerRepository.save(any(CustomerEntity.class))).thenReturn(Mono.just(customerEntity));
             when(customerMapper.toResponse(customerEntity)).thenReturn(customerResponse);
 
-            Mono<CustomerResponse> result = customerService.createCustomer(validRequest);
+            Mono<CustomerResponse> result = customerService.createCustomer(headerRequest, validRequest);
 
             StepVerifier.create(result)
                     .expectNext(customerResponse)
@@ -106,7 +116,7 @@ class CustomerServiceImplTest {
             when(customerMapper.toResponse(entity1)).thenReturn(response1);
             when(customerMapper.toResponse(entity2)).thenReturn(response2);
 
-            Flux<CustomerResponse> result = customerService.getAllCustomers();
+            Flux<CustomerResponse> result = customerService.getAllCustomers(headerRequest);
 
             StepVerifier.create(result)
                     .expectNext(response1)
@@ -120,7 +130,7 @@ class CustomerServiceImplTest {
             when(customerRepository.findAll())
                     .thenReturn(Flux.empty());
 
-            Flux<CustomerResponse> result = customerService.getAllCustomers();
+            Flux<CustomerResponse> result = customerService.getAllCustomers(headerRequest);
 
             StepVerifier.create(result)
                     .verifyComplete();
@@ -142,7 +152,7 @@ class CustomerServiceImplTest {
             when(customerMapper.toResponse(entity))
                     .thenReturn(response);
 
-            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(entity.getDocumentNumber());
+            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(headerRequest, entity.getDocumentNumber());
 
             StepVerifier.create(result)
                     .expectNext(response)
@@ -157,7 +167,7 @@ class CustomerServiceImplTest {
             when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.empty());
 
-            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(documentNumber);
+            Mono<CustomerResponse> result = customerService.getCustomerByDocumentNumber(headerRequest, documentNumber);
 
             StepVerifier.create(result)
                     .expectError(NotFoundException.class)
@@ -174,7 +184,7 @@ class CustomerServiceImplTest {
             when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.empty());
 
-            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
+            Mono<Void> result = customerService.deactivateCustomer(headerRequest, documentNumber);
 
             StepVerifier.create(result)
                     .expectError(NotFoundException.class)
@@ -194,7 +204,7 @@ class CustomerServiceImplTest {
             when(customerRepository.findByDocumentNumber(anyString()))
                     .thenReturn(Mono.just(customer));
 
-            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
+            Mono<Void> result = customerService.deactivateCustomer(headerRequest, documentNumber);
 
             StepVerifier.create(result)
                     .expectError(BusinessException.class)
@@ -217,7 +227,7 @@ class CustomerServiceImplTest {
             when(customerRepository.save(any(CustomerEntity.class)))
                     .thenReturn(Mono.just(customer));
 
-            Mono<Void> result = customerService.deactivateCustomer(documentNumber);
+            Mono<Void> result = customerService.deactivateCustomer(headerRequest, documentNumber);
 
             StepVerifier.create(result)
                     .verifyComplete();

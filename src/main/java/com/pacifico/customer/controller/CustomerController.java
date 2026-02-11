@@ -43,7 +43,7 @@ public class CustomerController {
                 .consumerServiceName(consumerServiceName)
                 .build();
         return headerValidate.validateGetCustomer(header)
-                .then(customerService.createCustomer(request));
+                .then(customerService.createCustomer(header, request));
     }
 
     @GetMapping("/{documentNumber}")
@@ -62,7 +62,7 @@ public class CustomerController {
                 .consumerServiceName(consumerServiceName)
                 .build();
         return headerValidate.validateGetCustomer(header)
-                .then(customerService.getCustomerByDocumentNumber(documentNumber));
+                .then(customerService.getCustomerByDocumentNumber(header, documentNumber));
     }
 
     @GetMapping
@@ -81,7 +81,7 @@ public class CustomerController {
                 .consumerServiceName(consumerServiceName)
                 .build();
         return headerValidate.validateGetCustomer(header)
-                .thenMany(customerService.getAllCustomers());
+                .thenMany(customerService.getAllCustomers(header));
     }
 
     @PatchMapping("{documentNumber}/deactive")
@@ -100,6 +100,6 @@ public class CustomerController {
                 .consumerServiceName(consumerServiceName)
                 .build();
         return headerValidate.validateGetCustomer(header)
-                 .then(customerService.deactivateCustomer(documentNumber));
+                 .then(customerService.deactivateCustomer(header, documentNumber));
     }
 }
