@@ -14,7 +14,7 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado:
 
 ## Configurar el application.yml con tus datos de conexion
 
-## SonarQube
+## SonarQube (febrero 2026)
 Imagen de evidencia: ![Evidencia SonarQube](sonar-11-febrero.png)
 
 ## Postman
