@@ -1,55 +1,211 @@
 {
-	"info": {
-		"_postman_id": "f0d34b50-204d-44c3-859f-d58f2a58d47d",
-		"name": "gestion_clientes",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "17002104"
-	},
-	"item": [
-		{
-			"name": "crear customer",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"documentType\": \"dni\",\r\n    \"documentNumber\": \"23192178\",\r\n    \"fullName\": \"juana alegria\",\r\n    \"email\": \"juana@gmail.com\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "http://localhost:8081/customers"
-			},
-			"response": []
-		},
-		{
-			"name": "getAllCustomers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "http://localhost:8081/customers"
-			},
-			"response": []
-		},
-		{
-			"name": "getCustomerById",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "http://localhost:8081/customers/7cb4711d-644e-4ecf-a600-1fcd3361161c"
-			},
-			"response": []
-		},
-		{
-			"name": "updateCustomerStatus",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"url": "http://localhost:8081/customers/7cb4711d-644e-4ecf-a600-1fcd3361161c/deactive"
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "f0d34b50-204d-44c3-859f-d58f2a58d47d",
+    "name": "gestion_clientes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "17002104"
+  },
+  "item": [
+    {
+      "name": "crear customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Transaccion-Id",
+            "value": "adasdasd",
+            "type": "text"
+          },
+          {
+            "key": "Aplicacion-Id",
+            "value": "12313123",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Aplicacion",
+            "value": "Postman",
+            "type": "text"
+          },
+          {
+            "key": "Usuario-Consumidor-Id",
+            "value": "Neil",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Servicio-Consumidor",
+            "value": "devs",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"documentType\": \"dni\",\r\n    \"documentNumber\": \"4687794\",\r\n    \"fullName\": \"marco\",\r\n    \"email\": \"miraflores@gmail.com\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8081/customers",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "customers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getAllCustomers",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Transaccion-Id",
+            "value": "adasdasd",
+            "type": "text"
+          },
+          {
+            "key": "Aplicacion-Id",
+            "value": "12313123",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Aplicacion",
+            "value": "Postman",
+            "type": "text"
+          },
+          {
+            "key": "Usuario-Consumidor-Id",
+            "value": "Neil",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Servicio-Consumidor",
+            "value": "devs",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/customers",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "customers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getCustomerById",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Transaccion-Id",
+            "value": "asdadasdasdasd",
+            "type": "text"
+          },
+          {
+            "key": "Aplicacion-Id",
+            "value": "12313123",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Aplicacion",
+            "value": "Postman",
+            "type": "text"
+          },
+          {
+            "key": "Usuario-Consumidor-Id",
+            "value": "user-postman-neil",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Servicio-Consumidor",
+            "value": "devs",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/customers/4687794",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "customers",
+            "4687794"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "updateCustomerStatus",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Transaccion-Id",
+            "value": "adasdasd",
+            "type": "text"
+          },
+          {
+            "key": "Aplicacion-Id",
+            "value": "12313123",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Aplicacion",
+            "value": "Postman",
+            "type": "text"
+          },
+          {
+            "key": "Usuario-Consumidor-Id",
+            "value": "Neil",
+            "type": "text"
+          },
+          {
+            "key": "Nombre-Servicio-Consumidor",
+            "value": "devs",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8081/customers/4687794/deactive",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "customers",
+            "4687794",
+            "deactive"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
 }
