@@ -5,7 +5,7 @@ Proyecto Spring Boot para la gestión de clientes
 Antes de ejecutar el proyecto, asegúrate de tener instalado:
 - Java 17
 - Gradle 8+
-- SQL Server
+- SQL Server (crear la base de datos "db_customer_management" y el esquema "schema_customer")
 - Postman (opcional, para probar la colección)
 
 ## Configuración de la Base de Datos necesarias
@@ -15,7 +15,8 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado:
 ## Configurar el application.yml con tus datos de conexion
 
 ## SonarQube (febrero 2026)
-Imagen de evidencia: ![Evidencia SonarQube](sonar-11-febrero.png)
+Comando para ejecutar sonar: gradlew clean build sonarqube -Dsonar.projectKey=ms-customer-management -Dsonar.token=$TOKEN -Dsonar.host.url=http://localhost:9000
+Imagen de evidencia: ![Evidencia SonarQube](Sonar-16-febrero.png)
 
 ## Postman
 Archivo: gestion_clientes.postman_collection.json
